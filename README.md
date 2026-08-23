@@ -22,49 +22,40 @@ Creare dei file:
 - eventuale *client.c* che contiene i test.
 
 ## 2. Strutture Dati
-Creare delle struct per gestire:
-- configurazione del server (memorizza i parametri del server):
-    - porta di ascolto;
-    - dimensione massima del file di log;
-    - percorso del file di log corrente.
-- gestione connessione:
+Creare struct per gestire:
+- dati client;
+- gestione:
     - struttura per i thread/processi figli;
     - informazioni sui clienti connessi.
     
-## 3. Argomenti Riga Comandi
-Il server riceverà parametri come:
-- - p, -- port: porta di ascolto del server;
-- - s, -- size: dimensione massima del file di log in bytes;
-- - l, -- logdir: directory dove salvare i file di log.
-    
-## 4. Gestione del Server TCP
+## 3. Gestione del Server TCP
 Il coordinatore deve:
 - creare il socket;
 - impostare il riuso dell'indirizzo;
 - bindare l'indirizzo e la porta;
 - mettersi in ascolto.
 
-## 5. Gestione dei Thread/Processi
+## 4. Gestione dei Thread/Processi
 Il server può usare thread o processi e gestisce le richieste in ingresso.
 
-## 6. Gestione dei Segnali
+## 5. Gestione dei Segnali
 Il server deve gestire i seguenti segnali:
 - SIGALRM: scatta ogni X secondi, controlla la dimensione del file e se supera la soglia avvia la rotazione;
 - SIGPIPE: non deve far crashare il server se un client si disconnette all'improvviso durante una scrittura, è necessario intercettarlo e scrivere nel log la stringa: [TIMESTAMP, ID_MITTENTE, "DISCONNECT"];
 - SIGINT: deve smettere di accettare nuove connessioni e attendere che i client connessi finiscano di scrivere e chiudere in sicurezza il file di log.
     
-## 7. Gestione dei File di Log
+## 6. Gestione dei File di Log
 Il coordinatore deve:
 - scrivere in modalità append;
 - utilizzare lock di scrittura;
 - controllare la dimensione (SIGALRM);
 - rotazione dei log.
 
-## 8. Comunicazione Client-Server
-Formato del messaggio del client: [ID_MITTENTE, DATO]
+## 7. Comunicazione Client-Server
+Formato del messaggio del client: [ID_MITTENTE, DATO] 
 Il server riceve e legge il messaggio, estae i campi, calcola l'ora corrente del sistema e formatta [TIMESTAMP, ID_MITTENTE, DATO] prima di effetturare il lock e la scrittura.
 
-## 9. Test
+## 8. Test
 Creare test per verifica il server.
 Ad esempio:
 - test connessione singola;
