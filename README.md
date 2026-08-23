@@ -2,7 +2,7 @@
 Il sistema si basa su un'architettura Client/Server multi-processo o multi-thread per la gestione del log di produzione.
 Ruolo:
 - produttori (client): inviano messaggi contenenti dati numerici e un identificativo univoco;
-- coordinatore (aggregatore): server TCP in ascolto su una specifica porta; accetta le connessione dai client e gestisce dati.
+- coordinatore (aggregatore): server TCP in ascolto su una specifica porta, accetta le connessioni dai client e gestisce dati.
     
 Il coordinatore deve usare processi o thread multipli per gestire le connessioni client in ingresso.
 
@@ -25,7 +25,7 @@ Creare struct per gestire:
 - dati client;
 - gestione:
     - struttura per i thread/processi figli;
-    - informazioni sui clienti connessi.
+    - informazioni sui client connessi.
     
 ## 3. Gestione del Server TCP
 Il coordinatore deve:
@@ -52,7 +52,7 @@ Il coordinatore deve:
 
 ## 7. Comunicazione Client-Server
 Formato del messaggio del client: [ID_MITTENTE, DATO].
-Il server riceve e legge il messaggio, estae i campi, calcola l'ora corrente del sistema e formatta [TIMESTAMP, ID_MITTENTE, DATO] prima di effetturare il lock e la scrittura.
+Il server riceve e legge il messaggio, estrae i campi, calcola l'ora corrente del sistema e formatta [TIMESTAMP, ID_MITTENTE, DATO] prima di effetturare il lock e la scrittura.
 
 ## 8. Test
 Creare test per verifica il server.
