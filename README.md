@@ -16,7 +16,6 @@ Creare dei file:
     - logica di gestione del file di log (scrittura, calcolo timestamp, rotazione);
     - handler dei segnali SIGALRM, SIGPIPE, SIGINT;
 - *main.c* che contiene il **main**:
-    - gestione degli argomenti da riga di comando;
     - inizializzazione del socket TCP;
     - ciclo di accettazione delle connessioni con la generazione dei figli.
 - eventuale *client.c* che contiene i test.
@@ -52,7 +51,7 @@ Il coordinatore deve:
 - rotazione dei log.
 
 ## 7. Comunicazione Client-Server
-Formato del messaggio del client: [ID_MITTENTE, DATO] 
+Formato del messaggio del client: [ID_MITTENTE, DATO].
 Il server riceve e legge il messaggio, estae i campi, calcola l'ora corrente del sistema e formatta [TIMESTAMP, ID_MITTENTE, DATO] prima di effetturare il lock e la scrittura.
 
 ## 8. Test
