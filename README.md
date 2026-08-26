@@ -13,16 +13,15 @@ Creare dei file:
     - le definizioni delle strutture **struct**;
     - i **prototipi** delle funzioni che verranno implementate in un file.c;
 - *aggregator.c* (funzioni) che contiene:
-    - logica di gestione del file di log (scrittura, calcolo timestamp, rotazione);
-    - handler dei segnali SIGALRM, SIGPIPE, SIGINT;
-- *main.c* che contiene il **main**:
     - inizializzazione del socket TCP;
-    - ciclo di accettazione delle connessioni con la generazione dei figli.
+    - logica di gestione del file di log (scrittura, calcolo timestamp, rotazione);
+    - ciclo di accettazione delle connessioni con la generazione dei figli;
+    - handler dei segnali SIGALRM, SIGPIPE, SIGINT.
+- *main.c* che contiene il **main**.
 - eventuale *client.c* che contiene i test.
 
 ## 2. Strutture Dati
 Creare struct per gestire:
-- dati client;
 - gestione:
     - struttura per i thread/processi figli;
     - informazioni sui client connessi.
