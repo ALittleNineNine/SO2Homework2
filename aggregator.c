@@ -234,7 +234,7 @@ void accept_client(int server_fd) {
         info->client_socket = client_fd;
         info->id_client = ++count_client; // ID che incrementa
 
-        printf("client %d connesso\n", info->id_client);
+        printf("Client %d connesso\n", info->id_client);
 
         // crea processo figlio per gestire client corrente
         pid_t pid = fork();

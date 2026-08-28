@@ -62,3 +62,6 @@ Ad esempio:
 - test rotazione dei log;
 - test riuso di IP:PORT;
 - test gestione SIGINT controllata ecc...
+
+
+

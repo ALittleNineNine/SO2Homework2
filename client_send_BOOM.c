@@ -26,7 +26,6 @@ int main(int argc, char *argv[]) {
 
     // inizializzazioni
     int sockfd, n;
-    int id, dato;
     struct sockaddr_in serv_addr;
     struct hostent *server;
 
@@ -61,21 +60,19 @@ int main(int argc, char *argv[]) {
         error("Errore: impossibile connettere al aggregatore");
     }
 
-    printf("Connessione al aggregatore con successo\n");
-    printf("Digitare coppie \"ID DATO\" per inviarle al aggregatore:\n");
+    // mandare 1000 [9, 99999]
+    for (int i=0; i<1000; i++) {
 
-    // ottenere, generare e scrivere il messaggio da inviare in ogni ciclo
-    while (fscanf(stdin, "%d %d", &id, &dato) == 2) {
-
-        // ottenere e generare il messaggio da inviare
         memset(buffer, 0, sizeof(buffer));     // azzerare
-        snprintf(buffer, sizeof(buffer), "[%d, %d]\n", id, dato);
+        snprintf(buffer, sizeof(buffer), "[9, 99999]\n");
 
         // scrittura sul socket del messaggio da inviare
         n = write(sockfd, buffer, strlen(buffer));
         if (n < 0) {
             error("Errore: impossibile scrivere sul socket");
         }
+
+        sleep(1);
 
     }
 
