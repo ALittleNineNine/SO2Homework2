@@ -26,7 +26,7 @@
 #define DEFAULT_PORT 6666
 #define LOG_FILE_PATH "./logs/logfile.txt"
 #define LOG_DIR "./logs/"
-#define MAX_LOG_SIZE 200 
+#define MAX_LOG_SIZE 200
 
 #define MAX_CLIENTS_WAITING 10 
 #define CHECK_INTERVAL 5

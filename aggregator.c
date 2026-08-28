@@ -301,9 +301,18 @@ void manage_client(ConnectionInfo info) {
 // gestire segnali
 void set_signal(int server_fd) {
     close_server_fd = server_fd; // salva fd per signal handler
-    signal(SIGPIPE, signal_handler);
-    signal(SIGINT, signal_handler);
-    signal(SIGALRM, signal_handler);
+    // signal(SIGPIPE, signal_handler);
+    // signal(SIGINT, signal_handler);
+    // signal(SIGALRM, signal_handler);
+
+    struct sigaction sa;
+    sa.sa_handler = signal_handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+
+    sigaction(SIGPIPE, &sa, NULL);
+    sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGALRM, &sa, NULL);
 
     alarm(CHECK_INTERVAL); // timer per SIGALRM
 }
