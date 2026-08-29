@@ -29,7 +29,7 @@
 #define MAX_LOG_SIZE 200
 
 #define MAX_CLIENTS_WAITING 10 
-#define CHECK_INTERVAL 5
+#define CHECK_INTERVAL 1
 
 #define BUFFER_SIZE 1024
 

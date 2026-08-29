@@ -240,6 +240,7 @@ void accept_client(int server_fd) {
         pid_t pid = fork();
         if (pid == 0) {
             close(server_fd); // figlio non usa socket in ascolto
+            signal(SIGINT, SIG_IGN);    // processo figlio ignora SIGINT
             manage_client(*info); 
             free(info);
             exit(EXIT_SUCCESS); // figlio termina 
@@ -301,9 +302,6 @@ void manage_client(ConnectionInfo info) {
 // gestire segnali
 void set_signal(int server_fd) {
     close_server_fd = server_fd; // salva fd per signal handler
-    // signal(SIGPIPE, signal_handler);
-    // signal(SIGINT, signal_handler);
-    // signal(SIGALRM, signal_handler);
 
     struct sigaction sa;
     sa.sa_handler = signal_handler;
@@ -332,7 +330,13 @@ void signal_handler(int sg) {
         }
         // attende che processi figli terminano
         printf("Attesa terminazione processi figli\n");
-        while (waitpid(-1, NULL, 0) > 0) { }
+        pid_t w;
+        while (1) {
+            w = waitpid(-1, NULL, 0);
+            if (w > 0) continue;
+            if (w == -1 && errno == EINTR) continue;
+            break;
+        }
         sleep(1); // tempo per figli di terminare
         printf("Terminazione completata\n");
         exit(EXIT_SUCCESS);
@@ -351,3 +355,6 @@ void clean() {
     }
     printf("Pulizia completata\n");
 }
+
+
+

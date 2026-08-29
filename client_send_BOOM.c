@@ -60,8 +60,8 @@ int main(int argc, char *argv[]) {
         error("Errore: impossibile connettere al aggregatore");
     }
 
-    // mandare 1000 [9, 99999]
-    for (int i=0; i<1000; i++) {
+    // mandare 100 [9, 99999]
+    for (int i=0; i<100; i++) {
 
         memset(buffer, 0, sizeof(buffer));     // azzerare
         snprintf(buffer, sizeof(buffer), "[9, 99999]\n");
