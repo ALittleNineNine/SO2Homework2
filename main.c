@@ -1,6 +1,7 @@
-# include "aggregator.h"
+#include "aggregator.h"
 
 int main() {
+    
     // crea file log
     create_file_log();
 
@@ -17,7 +18,8 @@ int main() {
     // accetta client
     accept_client(server_fd);
     
-    // puliza
+    // pulizia
     clean();
     return EXIT_SUCCESS;
+
 }
