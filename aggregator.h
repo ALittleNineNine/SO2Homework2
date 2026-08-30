@@ -34,30 +34,55 @@
 #define BUFFER_SIZE 1024
 
 typedef struct {
-    int client_socket; // canale per comunicare con figlio
+    int client_socket; // canale per comunicare con il client
     int id_client; 
 } ConnectionInfo;
 
-// crea server
+// crea socket del server, lo configura e lo mette in ascolto, ritorna il fd del socket
 int create_server();
 
-// log
+/* ____________________ LOG ____________________ */
+
+// crea directory log se non esistente, e file log iniziale
 void create_file_log();
+
+// ottiene timestamp attuale in una stringa leggibile
 void get_current_time(char *buffer, size_t buffer_size);
+
+// scrittura messaggio (dato o DISCONNECT) su log con timestamp e lock
 void write_log(int id_client, const char *data);
+
+// disconnect log
 void disconnect_helper(int id_client);
+
+// controllo dimensione log e eventualmente avvia rotazione
 void check_log_size();
+
+// rotazione log: archivia file log corrente e ne crea uno nuovo
 void rotate_log();
 
-// gestione client
+/* ____________________ GESTIONE CLIENT ____________________ */
+
+// gestire client (processo padre): accetta connessioni e forka per ogni client
 void accept_client(int server_fd);
+
+// gestire client (processo figlio): legge e scrive su log i messaggi di un client
 void manage_client(ConnectionInfo info);
 
-// gestione segnale
+/* ____________________ GESTIONE SEGNALE ____________________ */
+
+// gestire segnali: registra handler e avvia timer
 void set_signal(int server_fd);
+
+// gestisce i SIGPIPE, SIGINT, SIGALRM
 void signal_handler(int sg);
 
-// pulizia
+/* ____________________ PULIZIA ____________________ */
+
+// chiude server socket
 void clean();
 
 #endif
+
+
+

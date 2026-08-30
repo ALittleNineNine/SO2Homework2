@@ -7,7 +7,7 @@ static volatile sig_atomic_t current_id_client = -1;
 static volatile sig_atomic_t sigpipe_on = 0;
 static volatile sig_atomic_t sigalrm_on = 0;
 
-// crea socket del server, lo configura e lo mette in ascolto
+// crea socket del server, lo configura e lo mette in ascolto, ritorna il fd del socket
 int create_server() {
     int sd = socket(AF_INET, SOCK_STREAM, 0);
     if (sd < 0) {
@@ -25,7 +25,7 @@ int create_server() {
 
     // configurazione indirizzo: struttura con indirizzo su cui il server sarà raggiungibile
     struct sockaddr_in serv_addr; // indirizzo (IP + porta) del server a cui connettersi
-    memset(&serv_addr, 0, sizeof(serv_addr)); // azzerra memoria
+    memset(&serv_addr, 0, sizeof(serv_addr)); // azzera memoria
     serv_addr.sin_family = AF_INET; // famiglia di indirizzi: IPv4
     serv_addr.sin_addr.s_addr = INADDR_ANY; // accetta connessioni su qls interfaccia di rete
     serv_addr.sin_port = htons(DEFAULT_PORT); // porta di ascolto
@@ -48,7 +48,7 @@ int create_server() {
     return sd; // return fd del socket
 }
 
-// crea directory se non esistente
+// crea directory log se non esistente, e file log iniziale
 void create_file_log() {
     if (mkdir("./logs/", 0755) == 0) {
         printf("Directory %s creata\n", LOG_DIR);
@@ -69,7 +69,7 @@ void create_file_log() {
     printf("File log: %s\n", LOG_FILE_PATH);
 }
 
-// ottieni timestamp attuale
+// ottiene timestamp attuale in una stringa leggibile
 void get_current_time(char *buffer, size_t buffer_size) {
     time_t now = time(NULL);
     strftime(buffer, buffer_size, "%Y-%m-%d %H:%M:%S", localtime(&now)); // scrive nel buffer usando ora del sistema
@@ -91,7 +91,7 @@ static int lock_on(int fd) {
     
 }
 
-// lock su un fd
+// rilascia lock su un fd
 static int lock_off(int fd) {
     struct flock lock; // struttura per lock
     lock.l_type = F_UNLCK;
@@ -106,7 +106,7 @@ static int lock_off(int fd) {
     return 0; // lock off con successo
 }
 
-// scrittura messaggio su log con timestamp e lock
+// scrittura messaggio (dato o DISCONNECT) su log con timestamp e lock
 void write_log(int id_client, const char *data) {
     char timestamp[64];
     get_current_time(timestamp, sizeof(timestamp));
@@ -158,12 +158,12 @@ void write_log(int id_client, const char *data) {
         close(fd);
 }
 
-// disconnect log 
+// disconnect log
 void disconnect_helper(int id_client) {
     write_log(id_client, "DISCONNECT");
 }
 
-// controllo dimensione log
+// controllo dimensione log e eventualmente avvia rotazione
 void check_log_size() {
     struct stat st; // struttura per info del file
     if (stat(LOG_FILE_PATH, &st) == 0) { // ottieni info file
@@ -174,7 +174,7 @@ void check_log_size() {
     }
 }
 
-// rotazione log: archivia file log corrente e ne crea nuovo
+// rotazione log: archivia file log corrente e ne crea uno nuovo
 void rotate_log() {
     char archive[512]; // nome file archiviato
     char timestamp[64];
@@ -191,7 +191,7 @@ void rotate_log() {
     }
 }
 
-// gestire client (processo padre)
+// gestire client (processo padre): accetta connessioni e forka per ogni client
 void accept_client(int server_fd) {
     struct sockaddr_in client_addr; // indirizzo client
     socklen_t len_addr = sizeof(client_addr);
@@ -256,7 +256,7 @@ void accept_client(int server_fd) {
     }
 }
 
-// gestire client (processo figlio)
+// gestire client (processo figlio): legge e scrive su log i messaggi di un client
 void manage_client(ConnectionInfo info) {
     current_id_client = info.id_client; // salva ID per signal handler
     char buffer[BUFFER_SIZE];
@@ -299,7 +299,7 @@ void manage_client(ConnectionInfo info) {
     close(info.client_socket); // chiudi socket client
 }
 
-// gestire segnali
+// gestire segnali: registra handler e avvia timer
 void set_signal(int server_fd) {
     close_server_fd = server_fd; // salva fd per signal handler
 
@@ -315,12 +315,13 @@ void set_signal(int server_fd) {
     alarm(CHECK_INTERVAL); // timer per SIGALRM
 }
 
+// gestisce i SIGPIPE, SIGINT, SIGALRM
 void signal_handler(int sg) {
     if (sg == SIGPIPE) {
         // SIGPIPE: client disconnesso all'improvviso durante scrittura
         sigpipe_on = 1; // gestito in manage_client()
     } else if (sg == SIGINT) {
-        // SIGINT: client termina in modo controllato (ctrl + C)
+        // SIGINT: aggregator termina in modo controllato (ctrl+C)
         printf("Segnale SIGINT - Terminazione controllata\n");
         server_running = 0; // ferma loop accettazione
         // chiude socket in ascolto
@@ -346,7 +347,7 @@ void signal_handler(int sg) {
     }
 }
 
-// pulizia
+// chiude server socket
 void clean() {
     printf("Pulizia risorse\n");
     if (close_server_fd >= 0) {
